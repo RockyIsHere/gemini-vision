@@ -13,17 +13,12 @@ type ImagePart = {
 
 function extractText(jsonData: string): string {
   try {
-    const startIndex = jsonData.indexOf("```JSON") + "```JSON".length;
-    const endIndex = jsonData.indexOf("```", startIndex);
-
-    if (startIndex !== -1 && endIndex !== -1) {
-      const extractedText = jsonData.substring(startIndex, endIndex).trim();
-      return extractedText;
-    } else {
-      throw new Error(
-        "Unable to find ```JSON delimiters in the provided text."
-      );
-    }
+    const startIndex = jsonData.indexOf("[");
+    const endIndex = jsonData.lastIndexOf("]") + 1;
+    // Extract the JSON substring
+    const jsonSubstring = jsonData.substring(startIndex, endIndex);
+    // Parse the JSON string to an array
+    return jsonSubstring;
   } catch (error) {
     return "";
   }
@@ -57,5 +52,5 @@ export async function POST(req: Request) {
   const parsedText = extractText(text);
   const jsonObject = JSON.parse(parsedText);
 
-  return Response.json({ products: jsonObject.data });
+  return Response.json({ products: jsonObject });
 }
